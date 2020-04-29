@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.wisewin.api.dao.CommentDAO">
+    <!--查询总评论数-->
+    <select id="getCommentSum" parameterType="java.util.Map" resultType="java.lang.Integer">
+        SELECT COUNT(id) FROM `ap_comment`
+        WHERE  create_time &lt;= #{endTime} AND  create_time &gt; #{startTime}
+    </select>
+
+    <!--查询发布商品数-->
+    <select id="getAppraisalSum" parameterType="java.util.Map" resultType="java.lang.Integer">
+        SELECT COUNT(id) FROM `ap_appraisal`
+        WHERE  create_time &lt;= #{endTime} AND  create_time &gt; #{startTime}
+    </select>
+
+
+    <select id="queryComment" resultMap="commentMap">
+        SELECT ap_user.head_url, ap_user.name,ap_comment.*
+        FROM ap_comment, ap_user
+        WHERE ap_comment.user_id = ap_user.id
+        AND ap_comment.cm_show = 'yes'
+        AND ap_comment.appraisal_id = #{map.appraisalId}
+        <include refid="limit" />
+    </select>
+
+    <select id="queryCommentCount" resultType="int">
+        SELECT count(1)
+        FROM ap_comment, ap_user
+        WHERE ap_comment.user_id = ap_user.id
+        AND ap_comment.cm_show = 'yes'
+        AND ap_comment.appraisal_id = #{map.appraisalId}
+
+    </select>
+
+    <resultMap id="commentMap" type="com.wisewin.api.entity.bo.ComtBO">
+        <id column="id" property="id"/>
+        <result column="user_id" property="userId"/>
+        <association property="integral" column="user_id" select="queryIntegral"/>
+    </resultMap>
+
+    <sql id="limit">
+        limit #{map.pageOffset},#{map.pageSize}
+    </sql>
+
+
+    <select id="queryGradeList" resultType="com.wisewin.api.entity.bo.GradeBO">
+        SELECT empirical,grade_name FROM appraisal.ap_grade ORDER BY empirical ASC
+    </select>
+
+
+    <select id="queryIntegral"  parameterType="java.lang.Integer" resultType="java.lang.Integer">
+    SELECT COUNT(1) FROM ap_comment
+    WHERE user_id = #{integral}
+    AND goods_state = 'yes'
+    AND cm_show = 'yes'
+  </select>
+
+
+    <insert id="insertComment" parameterType="com.wisewin.api.entity.bo.CommentBO">
+        INSERT INTO appraisal.ap_comment (
+          appraisal_id,
+          user_id,
+          cn_comment,
+          goods_state,
+          judge,
+          cm_show,
+          create_time,
+          update_time
+        )
+        VALUES
+          (
+            #{appraisalId},
+            #{userId},
+            #{cnComment},
+            #{goodsState},
+            #{judge},
+            'yes',
+            now(),
+            now()
+          ) ;
+    </insert>
+
+
+    <update id="deleteComment">
+        UPDATE
+          appraisal.ap_comment
+        SET
+
+          cm_show = 'no',
+          update_time = NOW()
+        WHERE id = #{id} ;
+    </update>
+
+
+    <update id="updateCommentGoods">
+        UPDATE
+          appraisal.ap_comment
+        SET
+          goods_state = #{goodsState},
+          update_time = NOW()
+        WHERE id = #{id} ;
+    </update>
+
+
+    <select id="selectCommentGoods" resultType="int">
+      SELECT COUNT(1) FROM ap_comment
+    WHERE
+    goods_state = 'yes' AND appraisal_id = (SELECT appraisal_id FROM ap_comment WHERE id = #{commentId} )
+
+    </select>
+
+    <select id="selectCommentStatusById" resultType="com.wisewin.api.entity.bo.CommentBO">
+        SELECT * FROM ap_comment WHERE id = #{id}
+    </select>
+
+
+</mapper>

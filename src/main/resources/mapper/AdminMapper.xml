@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 【管理员】 -->
+<mapper namespace="com.wisewin.api.dao.AdminDAO">
+    <!--根据手机号查找管理员信息-->
+    <select id="queryAdminInfoByMobile" parameterType="java.lang.String"
+            resultType="com.wisewin.api.entity.bo.AdminBO">
+        select sys_admin.*,sys_role.id as  roleId
+            from  sys_admin left  join sys_role  on  sys_role.id=sys_admin.role_id where  phone_number=  #{phoneNumber}
+    </select>
+
+    <sql id="limit">
+        limit #{pageOffset},#{pageSize}
+    </sql>
+
+    <!--添加管理员信息(管理員注冊)-->
+    <insert id="adminRegister" parameterType="com.wisewin.api.entity.bo.AdminBO" useGeneratedKeys="true"
+            keyProperty="id">
+          insert into sys_admin
+         (name,phone_number,password,status,role_id)
+         values
+         ( #{name},#{phoneNumber},#{password},#{status},#{roleId})
+    </insert>
+
+    <!-- 查找角色名是否注册过  -->
+    <select id="selectCountByRoleName" parameterType="String" resultType="Integer">
+        select count(role_name) from sys_role where role_name = #{roleName}
+    </select>
+    <!-- 查找手机号是否注册过  -->
+    <select id="selectCountByMobile" parameterType="String" resultType="int">
+       select count(id) from sys_admin where phone_number = #{phoneNumber}
+    </select>
+
+    <!-- 添加角色信息  -->
+    <insert id="addRole" parameterType="com.wisewin.api.entity.bo.RoleBO" useGeneratedKeys="true"
+            keyProperty="id">
+        insert into sys_role
+        (role_name,create_time,update_time)
+        values
+        ( #{roleName},now(),now())
+    </insert>
+
+    <!-- 给角色赋予权限  -->
+    <insert id="addRoleMenu">
+        insert into sys_role_menu
+        (role_id,menu_id)
+        values
+        <foreach collection="menuIdArr" item="menuId" separator=",">
+            (#{roleId},#{menuId})
+        </foreach>
+    </insert>
+    <!--  根据角色id删除角色信息  -->
+    <delete id="delRoleById" parameterType="Integer">
+        delete from sys_role where
+        <foreach collection="roleIds" item="roleId" separator="OR">
+            id=#{roleId}
+        </foreach>
+    </delete>
+
+    <!-- 下拉框展示 查询所有角色  -->
+    <select id="getRoleList" resultType="com.wisewin.api.entity.bo.RoleBO">
+        SELECT id,role_name FROM sys_role
+    </select>
+
+    <!-- 根据角色id删除对应的所有权限  -->
+    <delete id="delRoleMenuByRoleId" parameterType="Integer">
+        DELETE FROM sys_role_menu WHERE role_id=#{roleId}
+    </delete>
+
+    <!--查询角色下是否存在用户-->
+    <select id="checkRoleUser" parameterType="java.lang.Integer" resultType="int">
+           SELECT count(id) FROM sys_admin  WHERE  role_id =#{roleId}
+    </select>
+    <!--根据角色id修改角色名称  -->
+    <select id="updateRoleNameByRoleId">
+        UPDATE sys_role SET
+        <if test="roleName !=null and roleName!=''">
+            role_name=#{roleName},
+        </if>
+        update_time=now() WHERE id=#{roleId}
+    </select>
+    <!--根据角色名称查询角色信息  -->
+    <select id="getRoleByName" resultType="com.wisewin.api.entity.bo.RoleBO" parameterType="java.lang.String">
+        select * from sys_role
+        <if test="roleName!=null and roleName!=''">
+            where role_name like '%${roleName}%'
+        </if>
+    </select>
+    <!--根据角色id查询角色信息  -->
+    <select id="getRoleById" resultType="com.wisewin.api.entity.bo.RoleBO" parameterType="java.lang.Integer">
+        select * from sys_role
+        <if test="roleId!=null and roleId!=''">
+            where id = #{roleId}
+        </if>
+    </select>
+    <!--修改admin用户信息  -->
+    <update id="updateAdminUser" parameterType="com.wisewin.api.entity.bo.AdminBO">
+        UPDATE sys_admin
+        <set>
+            <if test="name!=null and name!=''">name=#{name},</if>
+            <if test="phoneNumber !=null and phoneNumber!='' ">phone_number=#{phoneNumber},</if>
+            <if test="status!=null and status!=''">status=#{status},</if>
+            <if test="roleId!=null and roleId!=''">role_id=#{roleId},</if>
+            <if test="password!=null and password!=''">password=#{password},</if>
+        </set>
+        WHERE id=#{id}
+    </update>
+    <!--根据用户id删除信息  -->
+    <delete id="delAdminById">
+        DELETE FROM sys_admin WHERE
+        <foreach collection="idArr" item="id" separator="OR">
+            id=#{id}
+        </foreach>
+    </delete>
+    <!--查询角色拥有的权限-->
+    <select id="getMenuByRoleId" resultType="com.wisewin.api.entity.bo.MenuBO" parameterType="java.lang.Integer">
+        select me.*
+        from sys_role_menu  rm
+        inner join  sys_menu me
+        on rm.menu_id=me.id
+        where  rm.role_id=#{roleId}
+    </select>
+
+    <!--根据 用户id\角色id\用户名 查询用户信息-->
+    <select id="getAdminByCond" parameterType="java.util.Map" resultType="com.wisewin.api.entity.bo.AdminBO">
+        select sys_admin.id,name,phone_number,role_id,role_name
+        from sys_admin ,sys_role
+        where role_id=sys_role.id
+        <if test="userId!=null and userId!=''">
+            and sys_admin.id=#{userId}
+        </if>
+        <if test="roleId!=null and roleId!=''">
+            and role_id=#{roleId}
+        </if>
+        <if test="userName!=null and userName!=''">
+            and name like '%${userName}%'
+        </if>
+        <include refid="adminLimit"/>
+    </select>
+
+    <sql id="adminLimit">
+        limit #{pageNo},#{pageSize}
+    </sql>
+
+    <!--根据 用户id\角色id\用户名 查询用户信息总数-->
+    <select id="getAdminCountByCond" parameterType="java.util.Map" resultType="java.lang.Integer">
+        select count(*)
+        from sys_admin,sys_role
+        where role_id=sys_role.id
+        <if test="userId!=null and userId!=''">
+            and sys_admin.id=#{userId}
+        </if>
+        <if test="roleId!=null and roleId!=''">
+            and role_id=#{roleId}
+        </if>
+        <if test="userName!=null and userName!=''">
+            and name like '%${userName}%'
+        </if>
+    </select>
+
+    <!--查询所有菜单-->
+    <select id="getMenuList" resultType="com.wisewin.api.entity.bo.MenuBO">
+        select * from sys_menu
+    </select>
+
+
+
+
+</mapper>

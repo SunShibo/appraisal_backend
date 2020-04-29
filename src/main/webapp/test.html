@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"   content="width=device-width, height=device-height, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no"/>
+    <title>用户测试用例</title>
+    <link rel="stylesheet" href="https://g.alicdn.com/de/prismplayer/2.8.2/skins/default/aliplayer-min.css" />
+</head>
+<body>
+<div  class="prism-player" id="J_prismPlayer"></div>
+<script charset="utf-8" type="text/javascript" src="https://g.alicdn.com/de/prismplayer/2.8.2/aliplayer-min.js"></script>
+<script>
+    var player = new Aliplayer({
+        id: 'J_prismPlayer',
+        width: '100%',
+        autoplay: true,
+        //播放方式四：使用STS方式播放
+        vid : '7a5bc986c1ab4b4caeec0e93d31b2f83',
+        accessKeyId: 'STS.NK2guqz9kF3D51dWJqJZUBzF5',
+        securityToken: 'CAIS7QF1q6Ft5B2yfSjIr4iHLM/Fl+ZK8fGvNxfVs0okRtV5rb/t1zz2IH5LfnNuA+8ds/owm2hY7vsclq5oRoReREvCNQ7XVgyStFHPWZHInuDox5pm4cTXOAr+Ihr/29CoFIedZdjBe/CrRknZnytou9XTfimjWFrXXv/kl5lrPJZtKWveVzddA8pMLQZPsdITMWCrVcygKRn3mGHdfiEK00he8Tomsf7gnpLDskuF1AOnkLIvyt6vcsT+Xa5FJ4xiVtq55utye5fa3TRYgxowr/kp1vYao2ic44/CXAEBu0jYKYHK9dF/2YrkpVeMiccagAEAx5qyOW/1bN3TCPOGxQUgrg9No6piWaPbcERApJ/sukRITDBfenSzcf/7QgmAwYBSi8FhlXTZE/7+KPKJEwS5zErQ6UEci70H1Wxv9cFMSAbTKhJ/HSjGJv1aMzfbB4HTCtBN0Z7zIVMGy7sM5iU8LJD7sjldh7qXmTPOdsS8fw==',
+        accessKeySecret: 'D2yJyShq69XA3axDANcA1MocdGVaAWQEEkSLRbA2aRPG',
+        region:'cn-shanghai',//eu-central-1,ap-southeast-1
+    },function(player){
+        console.log('播放器创建好了。')
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+         http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="propertyConfigurer"  class="com.wisewin.api.system.propertyPlaceholderPackage.CustomPropertyConfigurer">
+
+        <!-- 使用locations属性定义多个配置文件 -->
+        <property name="locations">
+            <list>
+                <value>classpath:conf/locale/jdbc.properties</value>
+            </list>
+        </property>
+    </bean>
+
+    <!--   开发数据源-->
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+          destroy-method="close">
+        <property name="driverClassName">
+            <value>com.mysql.jdbc.Driver</value>
+        </property>
+        <property name="url">
+            <value>${jdbc.url}</value>
+        </property>
+        <property name="username">
+            <value>${jdbc.user}</value>
+        </property>
+        <property name="password">
+            <value>${jdbc.password}</value>
+        </property>
+        <property name="defaultAutoCommit" value="false"></property>
+        <property name="initialSize" value="1" />
+        <property name="maxActive" value="30" />
+        <property name="maxWait" value="60000" />
+        <property name="minIdle" value="8" />
+        <property name="maxIdle" value="23" />
+        <property name="removeAbandoned" value="true" />
+        <property name="removeAbandonedTimeout" value="300" />
+        <property name="minEvictableIdleTimeMillis" value="1800000" />
+        <property name="testOnBorrow" value="false" />
+        <property name="testOnReturn" value="false" />
+        <property name="testWhileIdle" value="true" />
+        <property name="timeBetweenEvictionRunsMillis" value="300000" />
+        <property name="numTestsPerEvictionRun" value="23"/>
+        <property name="validationQuery" value="select 1"/>
+        <!-- 数据库	测试/验证查询
+        MySQL	SELECT 1
+        PostgreSQL	SELECT 1
+        Microsoft SQL Server	SELECT 1
+        SQLite	SELECT 1
+        H2	SELECT 1
+        Ingres	SELECT 1
+        Oracle	select 1 from dual
+        DB2	select 1 from sysibm.sysdummy1 或
+        SELECT current date FROM sysibm.sysdummy1
+        Apache Derby	VALUES 1 FROM SYSIBM.SYSDUMMY1 或
+        SELECT 1 FROM SYSIBM.SYSDUMMY1
+        HSQLDB	SELECT 1 FROM any_existing_table WHERE 1=0 或
+        SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
+        Informix	select count(*) from systables -->
+        <property name="connectionInitSqls">
+            <list>
+                <value>set names utf8mb4</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="sqlSessionFactory" class="com.wisewin.api.support.WrapAndChangeConfigureSqlSessionFactory">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="typeHandlers">
+    <bean class="com.wisewin.api.support.typehandler.IntEnumTypeHandlersFactoryBean"
+        p:basePackage="com.wisewin.api.entity"/>
+        </property>
+        <property name="mapperLocations" value="classpath:mapper/*Mapper.xml"/>
+        <property name="typeAliasesPackage" value="com.wisewin.api.entity" />
+    </bean>
+
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer"
+        p:basePackage="com.wisewin.api.dao"
+        p:sqlSessionFactoryBeanName="sqlSessionFactory"/>
+
+</beans>

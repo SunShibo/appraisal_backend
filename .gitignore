@@ -1,0 +1,12 @@
+target
+.settings
+.classpath
+.project
+.DS_Store
+*.epoch
+*.log
+*.iml
+.idea
+*.ipr
+*.iws
+*.bak

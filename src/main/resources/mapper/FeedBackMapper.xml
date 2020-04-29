@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 【用户】 -->
+<mapper namespace="com.wisewin.api.dao.FeedBackDAO">
+
+  <select id="feedBackList" resultType="com.wisewin.api.entity.bo.FeedBackBO">
+    SELECT ap_feedback.id,ap_feedback.user_id,ap_feedback.describc,ap_feedback.ap_status,
+    ap_feedback.create_time,ap_feedback.update_time,ap_feedback.is_show,ap_user.name AS userName,ap_user.phone as phone
+    FROM ap_user,ap_feedback
+    WHERE ap_feedback.user_id = ap_user.id
+      <if test="describc != null and describc != ''">
+        AND ap_feedback.describc LIKE concat('%',#{describc},'%')
+      </if>
+      <if test="apStatus != null and apStatus != ''">
+          AND ap_feedback.ap_status = #{apStatus}
+      </if>
+      AND ap_feedback.is_show = 'yes'
+      ORDER BY ap_feedback.create_time DESC
+      <include refid="Limit" />
+  </select>
+        <sql id="Limit">
+              limit #{pageNo},#{pageSize}
+            </sql>
+
+    <select id="feedBackCount" resultType="int">
+        SELECT count(1)
+        FROM ap_user,ap_feedback
+        WHERE ap_feedback.user_id = ap_user.id
+        <if test="describc != null and describc != ''">
+            AND ap_feedback.describc LIKE concat('%',#{describc},'%')
+        </if>
+        <if test="apStatus != null and apStatus != ''">
+            AND ap_feedback.ap_status = #{apStatus}
+        </if>
+        AND ap_feedback.is_show = 'yes'
+        ORDER BY ap_feedback.create_time DESC
+    </select>
+
+
+
+    <update id="updateFeedBack">
+        UPDATE
+          appraisal.ap_feedback
+        SET
+          ap_status = #{apStatus},
+          update_time = NOW()
+        WHERE id = #{id} ;
+    </update>
+        </mapper>
+
+
+
+

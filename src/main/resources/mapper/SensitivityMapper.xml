@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 敏感字 -->
+<mapper namespace="com.wisewin.api.dao.SensitivityDAO">
+
+    <!--添加-->
+    <insert id="add" >
+        insert into ap_sensitivity
+        (str,create_time)
+        values
+        (#{str},now())
+    </insert>
+
+    <!--查询-->
+    <select id="query" resultType="com.wisewin.api.entity.bo.SensitivityBO">
+        SELECT * FROM ap_sensitivity
+        ORDER BY
+        create_time
+        DESC
+        <include refid="Limit" />
+    </select>
+    <sql id="Limit">
+      limit #{pageNo},#{pageSize}
+    </sql>
+
+    <select id="selectCount" resultType="java.lang.Integer">
+        select count(*) from ap_sensitivity
+    </select>
+    <!--删除-->
+    <delete id="delete" >
+        DELETE  FROM
+          ap_sensitivity where id=#{vid}
+    </delete>
+
+</mapper>

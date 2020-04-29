@@ -1,0 +1,88 @@
+<?xml version="1.0"?>
+<configuration>
+
+    <!--value="/www/server/tomcat-api1/logs" -->
+    <property name="LOG_DIR" value="/www/server/tomcat-api1/logs" />
+    <!--&lt;!&ndash; ch.qos.logback.core.ConsoleAppender 控制台输出 &ndash;&gt;-->
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>[%-5level] %d{HH:mm:ss.SSS} [%thread] %logger{36} - %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+    <!-- ch.qos.logback.core.rolling.RollingFileAppender 文件日志输出 -->
+    <appender name="infoLog"    class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>INFO</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <Encoding>UTF-8</Encoding>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>${LOG_DIR}/appraisal-backend-info-%d{yyyy-MM-dd}.%i.log</FileNamePattern>
+            <MaxHistory>365</MaxHistory>
+            <TimeBasedFileNamingAndTriggeringPolicy     class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <MaxFileSize>100MB</MaxFileSize>
+            </TimeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <pattern>[%-5level] %d{HH:mm:ss.SSS} [%thread] %logger{36} - %msg%n</pattern>
+        </layout>
+    </appender>
+
+    <!--&lt;!&ndash; 错误日志的Appender&ndash;&gt;-->
+    <appender name="errorAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <Encoding>UTF-8</Encoding>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>${LOG_DIR}/appraisal-backend-error%d{yyyy-MM-dd}.%i.log</FileNamePattern>
+            <MaxHistory>365</MaxHistory>
+            <TimeBasedFileNamingAndTriggeringPolicy     class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <MaxFileSize>100MB</MaxFileSize>
+            </TimeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <pattern>[%-5level] %d{HH:mm:ss.SSS} [%thread] %logger{36} - %msg%n</pattern>
+        </layout>
+    </appender>
+
+    <!--&lt;!&ndash; 日志级别 &ndash;&gt;-->
+    <appender name="debugFile"    class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>DEBUG</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <Encoding>UTF-8</Encoding>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>${LOG_DIR}/appraisal-backend-%d{yyyy-MM-dd}.%i.log</FileNamePattern>
+            <MaxHistory>365</MaxHistory>
+            <TimeBasedFileNamingAndTriggeringPolicy     class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <MaxFileSize>100MB</MaxFileSize>
+            </TimeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <pattern>[%-5level] %d{HH:mm:ss.SSS} [%thread] %logger{36} - %msg%n</pattern>
+        </layout>
+    </appender>
+    <root level="info">
+        <!--定义了ERROR和INFO级别的日志，分别在FILE文件和控制台输出-->
+        <appender-ref ref="infoLog" />
+        <appender-ref ref="errorAppender" />
+        <!--<appender-ref ref="console" />-->
+      <!--  <appender-ref ref="debugFile"  />-->
+        <appender-ref ref="console" />
+    </root>
+
+    <!--&lt;!&ndash;<logger name="com.urbanfit.beml="debug">&ndash;&gt;-->
+    <!--&lt;!&ndash;<appender-ref ref="file" />&ndash;&gt;-->
+    <!--&lt;!&ndash;&lt;!&ndash;<appender-ref ref="errorAppender" />&ndash;&gt;&ndash;&gt;-->
+    <!--&lt;!&ndash;<appender-ref ref="console" />&ndash;&gt;-->
+    <!--&lt;!&ndash;</logger>&ndash;&gt;-->
+
+
+</configuration>

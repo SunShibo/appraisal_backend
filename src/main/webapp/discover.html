@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <link rel="stylesheet" href="./css/styles.css">
+    <link rel="stylesheet" href="./css/quill.bubble.css">
+    <link rel="stylesheet" href="./css/quill.core.css">
+    <link rel="stylesheet" href="./css/quill.snow.css">
+    <title></title>
+    <style>
+
+        #page #head{
+            padding: 10px;
+        }
+
+        img{
+            width: 100%;
+        }
+
+        .text{
+            padding: 0 6px;
+            letter-spacing: 2px;
+        }
+
+        video{
+            width:100%;
+            height:100%;
+            object-fit:fill;
+        }
+    </style>
+</head>
+<body>
+    <div id="page">
+        <div id="head">
+            <div id="title" class="title-font"></div>
+            <div class="info-font"><span id="createTime"></span> 阅读 <span id="browse"></span></div>
+        </div>
+        <div class="text ql-editor" id="content"></div>
+    </div>
+<script src="./js/jquery-3.4.1.min.js"></script>
+<script src="js/discover.js"></script>
+</body>
+</html>

@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 【用户】 -->
+<mapper namespace="com.wisewin.api.dao.AppraisalDAO">
+
+    <select id="queryAppraisal" resultType="com.wisewin.api.entity.bo.AppraisalBO">
+        select ap_appraisal.*,ap_appraisal_type.type_name as appraisalTypeName,ap_user.name AS userName
+        from ap_appraisal,ap_appraisal_type,ap_user
+        <where>
+            ap_appraisal.appraisal_type_id = ap_appraisal_type.id AND ap_appraisal.user_id = ap_user.id
+            <if test="map.title != null and map.title != ''">
+                AND   ap_appraisal.title like CONCAT('%',#{map.title},'%')
+            </if>
+            <if test="map.appraisalState != null and map.appraisalState != ''">
+             and ap_appraisal.appraisal_state = #{map.appraisalState}
+            </if>
+            <if test="map.appraisalTypeId != null and map.appraisalTypeId !=''">
+             and ap_appraisal.appraisal_type_id = #{map.appraisalTypeId}
+            </if>
+            <if test="map.reisedState != null and map.reisedState != ''">
+                and ap_appraisal.reised_state = #{map.reisedState}
+            </if>
+            <if test="map.status != null and map.status != ''">
+                and ap_appraisal.status = #{map.status}
+            </if>
+            <if test="map.apCase != null and map.apCase != ''">
+                and ap_appraisal.ap_case = #{map.apCase}
+            </if>
+
+        </where>
+        order by ap_appraisal.create_time desc
+
+        limit  #{map.pageOffset},#{map.pageSize}
+
+    </select>
+
+    <sql id="limit">
+        limit #{pageOffset},#{pageSize}
+    </sql>
+
+    <select id="queryAppraisalConunt" resultType="java.lang.Integer">
+        select count(1)
+        from ap_appraisal,ap_appraisal_type
+        <where>
+            ap_appraisal.appraisal_type_id = ap_appraisal_type.id
+            <if test="map.title != null and map.title != ''">
+                and ap_appraisal.title like CONCAT('%',#{map.title},'%')
+            </if>
+            <if test="map.appraisalState != null and map.appraisalState != ''">
+                and ap_appraisal.appraisal_state = #{map.appraisalState}
+            </if>
+            <if test="map.appraisalTypeId != null and map.appraisalTypeId !=''">
+                and ap_appraisal.appraisal_type_id = #{map.appraisalTypeId}
+            </if>
+            <if test="map.reisedState != null and map.reisedState != ''">
+                and ap_appraisal.reised_state = #{map.reisedState}
+            </if>
+            <if test="map.status != null and map.status != ''">
+                and ap_appraisal.status = #{map.status}
+            </if>
+            <if test="map.apCase != null and map.apCase != ''">
+                and ap_appraisal.ap_case = #{map.apCase}
+            </if>
+        </where>
+    </select>
+
+
+    <update id="updateAppraisalCase">
+    UPDATE
+    appraisal.ap_appraisal
+    SET
+    ap_case = #{case},
+    WHERE id = #{id} ;
+    </update>
+
+
+    <select id="queryappraisalById" resultType="com.wisewin.api.entity.bo.AppraisalBO">
+        select ap_appraisal.*,ap_appraisal_type.type_name as appraisalTypeName,ap_user.name AS userName
+        from ap_appraisal,ap_appraisal_type,ap_user
+        where
+        ap_appraisal.appraisal_type_id = ap_appraisal_type.id AND ap_appraisal.user_id = ap_user.id
+        and ap_appraisal.id = #{appraisalId}
+    </select>
+
+
+    <update id="updateAppraisal">
+            UPDATE
+      appraisal.ap_appraisal
+    SET
+        <if test="title != null and  title != ''">
+            title = #{title},
+        </if>
+        <if test="describc != null and describc != ''">
+            describc = #{describc},
+        </if>
+       <if test="appraisalState != null and appraisalState !=''">
+          appraisal_state = #{appraisalState},
+       </if>
+       <if test="apCase != null and apCase!= ''">
+           ap_case = #{apCase},
+       </if>
+          <if test="status != null and status != ''">
+              STATUS = #{status},
+          </if>
+          <if test="apImages != null and apImages != ''">
+              ap_images = #{apImages},
+          </if>
+            <if test="createTime != null and createTime != ''">
+                create_time = #{createTime},
+            </if>
+      update_time = now()
+    WHERE id = #{id};
+
+
+    </update>
+
+
+
+
+    <update id="updateAppraisalStateById">
+        UPDATE
+  appraisal.ap_appraisal
+    SET
+      `status` = #{state},
+      update_time = NOW()
+    WHERE id = #{id} ;
+
+    </update>
+
+    <insert id="addComment" >
+        INSERT INTO `ap_comment` ( `appraisal_id`, `user_id`, `cn_comment`, `goods_state`, `judge`,
+        `cm_show`, `create_time`,`update_time`)
+        VALUES (#{appraisalId},#{userId}, #{cnComment},'no', #{judge},
+         'yes',NOW(),NOW());
+    </insert>
+
+
+    <!--添加采纳日志-->
+    <insert id="addLog"  parameterType="com.wisewin.api.entity.dto.AcceptLogDTO"  >
+        INSERT INTO `ap_accept_log` (`create_time`, `admin_id`, `user_id`, `type`, `content`)
+        VALUES (NOW(),#{adminId},#{userId},#{type},#{content});
+    </insert>
+
+    <!--查询采纳日志-->
+
+    <select id="queryLog" parameterType="java.util.Map"  resultType="com.wisewin.api.entity.bo.AcceptLogBO" >
+       select admin.`name` as adminName,u.`name` as userName ,log.create_time,log.type,log.content
+         from  `ap_accept_log`  log  LEFT JOIN ap_user u ON u.id=log.user_id
+         LEFT JOIN sys_admin admin on admin.id= log.admin_id
+        <where>
+            <if test="startTime!=null and endTime!=null" >
+                log.create_time BETWEEN #{startTime} and #{endTime}
+            </if>
+            <if test="uName!=null and uName!='' ">
+                  and admin.name LIKE '%${uName}%'
+            </if>
+        </where>
+        ORDER BY create_time DESC
+        limit  #{pageOffset},#{pageSize}
+    </select>
+
+    <select id="queryLogCount" parameterType="java.util.Map"  resultType="int" >
+        select count(log.id)
+        from  `ap_accept_log`  log  LEFT JOIN ap_user u ON u.id=log.user_id
+        LEFT JOIN sys_admin admin on admin.id= log.admin_id
+        <where>
+            <if test="startTime!=null and endTime!=null" >
+                log.create_time BETWEEN #{startTime} and #{endTime}
+            </if>
+            <if test="uName!=null and uName!='' ">
+                and admin.name LIKE '%${uName}%'
+            </if>
+        </where>
+    </select>
+
+
+    <update id="updateAppraisalreisedState">
+        UPDATE
+          appraisal.ap_appraisal
+        SET
+          reised_state = #{reisedState}
+        WHERE id = #{id} ;
+    </update>
+</mapper>

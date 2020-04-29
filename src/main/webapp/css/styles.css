@@ -1,0 +1,63 @@
+body,
+div,
+dl,
+dt,
+dd,
+ul,
+ol,
+li,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+pre,
+code,
+form,
+fieldset,
+legend,
+input,
+button,
+textarea,
+p,
+blockquote,
+th,
+td {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background: #fff;
+}
+
+html {
+    overflow-y: scroll;
+}
+
+.title-font{
+    font-size: 20px;
+    font-weight: 600;
+    color: #262626;
+}
+
+.info-font{
+    color: #959595;
+    font-size: 14px;
+    margin: 5px 0;
+}
+
+#content{
+    margin: 10px;
+}
+
+#content > img{
+    width: 100%;
+}
+
+.ql-video{
+    width: 100%;
+    margin: 0 auto;
+    height: 200px;
+}

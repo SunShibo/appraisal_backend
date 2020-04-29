@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta name="format-detection" content="telephone=no">
+    <meta http-equiv="x-rim-auto-match" content="none">
+    <link rel="stylesheet" href="./css/styles.css">
+    <link rel="stylesheet" href="./css/quill.bubble.css">
+    <link rel="stylesheet" href="./css/quill.core.css">
+    <link rel="stylesheet" href="./css/quill.snow.css">
+    <title></title>
+    <style>
+        #page #head{
+            display: flex;
+            justify-content: space-between;
+            align-content: center;
+        }
+
+        #head .img{
+            flex: 0.3;
+            padding: 10px;
+            height: 80px;
+            line-height: 80px;
+            position: relative;
+        }
+
+        #head .img img{
+            border-radius: 4px;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        #head .head-info{
+            padding: 5px 0;
+            flex: 0.8;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+        }
+
+        #activity-info{
+            display: flex;
+            flex-direction:column;
+            justify-content: space-around;
+        }
+
+        #activity-info div{
+            padding: 15px 0;
+        }
+
+        #activity-info .info-item{
+            margin: 0 10px;
+            padding: 0 10px;
+            font-size: 16px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        #activity-info .info-item .label{
+            flex: 0.3;
+            text-align: left;
+            font-weight: 600;
+            color: #262626;
+        }
+
+        #activity-info .info-item div{
+            flex: 0.8;
+            text-align: right;
+            color: #959595;
+        }
+
+        .info-item a{
+            color: #959595;
+            text-decoration: none;
+        }
+
+        .info-item:first-child{
+            border-top: 1px solid #eeeeee;
+        }
+
+        .info-item:last-child{
+            border-bottom: 1px solid #eeeeee;
+        }
+        video{
+            width:100%;
+            height:100%;
+            object-fit:fill;
+        }
+    </style>
+</head>
+<body>
+    <div id="page">
+        <div id="head">
+            <div class="img">
+                <img id="thumbnail" src="" width="80px" height="80px" onerror="javascript:this.src='http://duoyuka.oss-cn-beijing.aliyuncs.com/1558067393946.png';">
+            </div>
+            <div class="head-info">
+                <div id="title" class="title-font"></div>
+                <div class="info-font">活动时间：<span id="activitytime"></span> <span id="week"></span></div>
+            </div>
+        </div>
+        <div id="activity-info">
+            <div class="info-item">
+                <div class="label">地址</div>
+                <div><span id="activitysite"></span></div>
+            </div>
+            <div class="info-item">
+                <div class="label">价格</div>
+                <div>¥<span id="ticket"></span></div>
+            </div>
+            <div class="info-item" id="callPhone">
+                <div class="label">咨询电话</div>
+                <div><a id="phone" style="vertical-align: top"></a><img src="./image/next.png" alt="" width="20px" height="20px"></div>
+            </div>
+        </div>
+        <div>
+            <div class="title-font" style="margin: 20px 10px">
+                活动详情
+            </div>
+            <div id="content" class="ql-editor"></div>
+        </div>
+    </div>
+<script src="./js/jquery-3.4.1.min.js"></script>
+<script src="./js/activity.js"></script>
+</body>
+</html>

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="./css/quill.core.css">
+    <style>
+        body{
+            margin: 0;
+            padding: 0;
+        }
+        #page{
+            padding: 12px 6px;
+        }
+
+        img {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+<div id="page" class="ql-editor">
+
+</div>
+<script src="./js/jquery-3.4.1.min.js"></script>
+<script>
+    $(function () {
+        var id = getUrl('id');
+        var page = getUrl('page');
+        if(page=="language"){//语言亮点
+            getData(id, 'language');
+        }else if(page == "curriculum"){//课程亮点
+            getData(id,'course');
+        }else if(page == "manuscript"){//文稿
+            getQueryManuscript(id);
+        }else if(page == "help"){//帮助中心
+            getHelp(id);
+        }
+    });
+
+    function getHelp(id) {
+        $.ajax({
+            url: 'other/queryHelp',
+            type: 'POST',
+            dataType: 'json',
+            data: {id: id},
+            success: function (response) {
+                $('#page').html(response.msg);
+            }
+        })
+    }
+
+    function getQueryManuscript(id){
+        $.ajax({
+            url: '/other/queryManuscript',
+            type: 'POST',
+            dataType: 'json',
+            data: {chapterId: id},
+            success: function (response) {
+                $('#page').html(response.msg);
+            }
+        })
+    }
+
+    function getData(id, page) {
+        $.ajax({
+            url: '/other/queryLightspot',
+            type: 'POST',
+            dataType: 'json',
+            data: {id: id, type: page},
+            success: function (response) {
+                $('#page').html(response.msg);
+            }
+        })
+    }
+
+    function getUrl(name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+        var r = window.location.search.substr(1).match(reg);
+        if (name) {
+            if (r != null)
+                return decodeURI(r[2]);
+            return null;
+        } else {
+            r = window.location.search.substr(1);
+            if (r != null)
+                return decodeURI(r);
+            return null;
+        }
+    }
+</script>
+</body>
+</html>

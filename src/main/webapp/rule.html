@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="./css/quill.bubble.css">
+    <link rel="stylesheet" href="./css/quill.core.css">
+    <link rel="stylesheet" href="./css/quill.snow.css">
+    <style>
+        #page {
+            padding: 6px 12px;
+            margin: 0 auto;
+        }
+        img {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+ <div id="page" class="ql-editor">
+
+ </div>
+ <script src="./js/jquery-3.4.1.min.js"></script>
+ <script>
+    $(function () {
+        var page = getUrl('page');
+        if(page=="notice"){//购买须知
+            getData('购买须知');
+        }else if(page == "clause"){//隐私条款
+            getData('隐私条款');
+        }else if(page == "rule"){//签到规则
+            getData('签到规则');
+        }
+    });
+    
+    function getData(page) {
+        $.ajax({
+            url: '/other/queryConfig',
+            type: 'POST',
+            dataType: 'json',
+            data: {config: page},
+            success: function (response) {
+                $('#page').html(response.data.content);
+            }
+        })
+    }
+    
+    function getUrl(name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+        var r = window.location.search.substr(1).match(reg);
+        if (name) {
+            if (r != null)
+                return decodeURI(r[2]);
+            return null;
+        } else {
+            r = window.location.search.substr(1);
+            if (r != null)
+                return decodeURI(r);
+            return null;
+        }
+    }
+ </script>
+</body>
+</html>

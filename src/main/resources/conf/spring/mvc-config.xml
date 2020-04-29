@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd  
+            http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <!-- 开启controller注解支持 -->
+    <context:component-scan base-package="com.wisewin.api.web.controller" use-default-filters="false">
+        <context:include-filter type="annotation"
+                                expression="org.springframework.stereotype.Controller"/>
+        <context:include-filter type="annotation"
+                                expression="org.springframework.web.bind.annotation.ControllerAdvice"/>
+    </context:component-scan>
+    <aop:aspectj-autoproxy proxy-target-class="true"/>
+    <mvc:annotation-driven>
+        <mvc:message-converters register-defaults="true">
+            <bean class="org.springframework.http.converter.StringHttpMessageConverter">
+                <property name="supportedMediaTypes">
+                    <list>
+                        <value>application/json;charset=UTF-8</value>
+                        <value>text/html;charset=UTF-8</value>
+                    </list>
+                </property>
+            </bean>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
+
+    <mvc:resources mapping="/**" location="/" />
+
+
+    <!--配置拦截器, 多个拦截器,顺序执行 -->
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <!-- 匹配的是url路径， 如果不配置或/**,将拦截所有的Controller -->
+            <!--<mvc:mapping path="/index" />-->
+            <!--<mvc:mapping path="/dm/**" />-->
+            <!--<mvc:mapping path="/job/**" />-->
+            <!--<mvc:mapping path="/org/**" />-->
+            <!--<mvc:mapping path="/staff/**" />-->
+            <!--<mvc:mapping path="/mutual/**" />-->
+            <!--<mvc:mapping path="/capability/**" />-->
+            <!--<mvc:mapping path="/res/**" />-->
+            <!--<mvc:mapping path="/role/**" />-->
+            <!--<mvc:mapping path="/wallpaper/**" />-->
+            <!--<mvc:mapping path="/saver/**" />-->
+            <mvc:mapping path="/**" />
+            <mvc:exclude-mapping path="/static/**"/>
+            <mvc:exclude-mapping path="/system/**"/>
+            <bean class="com.wisewin.api.web.support.interceptor.AuthInterceptor"></bean>
+        </mvc:interceptor>
+    </mvc:interceptors>
+
+    <bean id="multipartResolver"
+          class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <!-- one of the properties available; the maximum file size in bytes -->
+        <property name="maxUploadSize" value="100000000" />
+    </bean>
+
+    <bean id="velocityConfig"
+          class="org.springframework.web.servlet.view.velocity.VelocityConfigurer">
+        <property name="resourceLoaderPath" value="/WEB-INF/view/" />
+        <property name="velocityProperties">
+            <props>
+                <prop key="input.encoding">utf8</prop>
+                <prop key="output.encoding">utf8</prop>
+                <prop key="contentType">text/html;charset=UTF-8</prop>
+                <prop key="runtime.interpolate.string.literals">true</prop>
+                <prop key="eventhandler.referenceinsertion.class">org.apache.velocity.app.event.implement.EscapeHtmlReference</prop>
+                <prop key="eventhandler.escape.html.match">/_html_*/</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="viewResolver"
+          class="org.springframework.web.servlet.view.velocity.VelocityLayoutViewResolver">
+        <property name="viewClass" value="org.springframework.web.servlet.view.velocity.VelocityLayoutView"/>
+        <!--<property name="toolboxConfigLocation" value="/WEB-INF/classes/toolbox.xml"/>-->
+        <property name="contentType" value="text/html;charset=UTF-8" />
+        <property name="exposeSpringMacroHelpers" value="true" />
+        <property name="prefix" value=""/>
+        <property name="suffix" value=".vm" />
+        <property name="layoutUrl" value="layout/default.vm"></property>
+        <property name="layoutKey" value="layout"></property>
+        <property name="screenContentKey" value="screen_placeholder" />
+        <property name="exposeRequestAttributes" value="true" /><!--是否开放request属性-->
+        <property name="requestContextAttribute" value="rc"/><!--request属性引用名称-->
+        <property name="dateToolAttribute">
+            <value>dateTool</value>
+        </property>
+        <property name="numberToolAttribute">
+            <value>numberTool</value>
+        </property>
+    </bean>
+
+    <!--  配置JSP 显示ViewResolver  -->
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
+        <property name="prefix" value="/WEB-INF/jsp/"/>
+        <property name="suffix" value=".jsp"/>
+    </bean>
+
+    <!-- 全局异常处理 -->
+    <!--<bean id="exceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">-->
+        <!--<property name="defaultErrorView">-->
+            <!--<value>500.html</value>-->
+        <!--</property>-->
+        <!--<property name="defaultStatusCode">-->
+            <!--<value>500</value>-->
+        <!--</property>-->
+        <!--<property name="warnLogCategory">-->
+            <!--<value>org.springframework.web.servlet.handler.SimpleMappingExceptionResolver</value>-->
+        <!--</property>-->
+    <!--</bean>-->
+
+</beans>

@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 【用户】 -->
+<mapper namespace="com.wisewin.api.dao.UserDao">
+
+    <select id="getUserList" resultType="com.wisewin.api.entity.bo.UserBO">
+        select * from `ap_user`
+        <where>
+
+            <if test="phone!=null and phone!=''">
+                phone like concat("%",#{phone}"%")
+            </if>
+            <if test="name!=null and name!=''">
+                and `name` like concat("%",#{name}"%")
+            </if>
+            <if test="watermarkState != null and watermarkState != ''">
+                and watermark_state = #{watermarkState}
+            </if>
+        </where>
+        limit #{pageOffset},#{pageSize}
+    </select>
+    <select id="getUserListCount" resultType="java.lang.Integer">
+        select count(*) from `ap_user`
+        <where>
+            <if test="phone!=null and phone!=''">
+                phone like concat("%",#{phone}"%")
+            </if>
+            <if test="name!=null and name!=''">
+                and name like concat("%",#{name}"%")
+            </if>
+            <if test="watermarkState != null and watermarkState != ''">
+                and watermark_state = #{watermarkState}
+            </if>
+        </where>
+    </select>
+
+    <select id="getUserById" resultType="com.wisewin.api.entity.bo.UserBO">
+        select * from `ap_user`
+        where id=#{id}
+    </select>
+
+    <update id="updUser" parameterType="com.wisewin.api.entity.bo.UserBO">
+        update  ap_user
+        <set>
+            <if test="name!=null and name!=''">
+                `name`=#{name},
+            </if>
+            <if test="phone!=null and phone!=''">
+                `phone`=#{phone},
+            </if>
+            <if test="headUrl!=null and headUrl!=''">
+                `head_url`=#{headUrl},
+            </if>
+            <if test="integral!=null and integral!=''">
+                `integral`=#{integral},
+            </if>
+            <if test="money!=null and money!=''">
+                `money`=#{money},
+            </if>
+            <if test="qqOpenid!=null and qqOpenid!=''">
+                `qq_openid`=#{qqOpenid},
+            </if>
+            <if test="wxOpenid!=null and wxOpenid!=''">
+                `wx_openid`=#{wxOpenid},
+            </if>
+            <if test="status!=null and status!=''">
+                `status`=#{status},
+            </if>
+            <if test="registeredChannels!=null and registeredChannels!=''">
+                `registered_channels`=#{registeredChannels},
+            </if>
+            <if test="idNumber!=null and idNumber!=''">
+                `id_number`=#{idNumber},
+            </if>
+            <if test="birthday!=null and birthday!=''">
+                `birthday`=#{birthday},
+            </if>
+            <if test="email!=null and email!=''">
+                `email`=#{email},
+            </if>
+            <if test="name!=null and name!=''">
+                `name`=#{name},
+            </if>
+            <if test="system!=null and system!=''">
+                `system`=#{system},
+            </if>
+            update_time=now()
+        </set>
+        where id=#{id}
+    </update>
+
+    <update id="updUserMoney" parameterType="com.wisewin.api.entity.bo.UserBO">
+        update  ap_user
+        <set>
+            <if test="money!=null and money!=''">
+                `money`=`money`+#{money},
+            </if>
+            update_time=now()
+        </set>
+        where id=#{id}
+    </update>
+
+
+    <!--查看系统用户-->
+    <select id="querySystemUser" resultType="com.wisewin.api.entity.bo.UserBO">
+        select * from `ap_user`  where system='yes'
+    </select>
+
+    <update id="updatewatermarkState">
+        UPDATE
+          appraisal.ap_user
+        SET
+          watermark_state = #{watermarkState}
+        WHERE id = #{id} ;
+    </update>
+
+
+</mapper>

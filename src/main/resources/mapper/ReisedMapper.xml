@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 【用户】 -->
+<mapper namespace="com.wisewin.api.dao.ReisedDAO">
+
+    <select id="queryReisedList" resultType="com.wisewin.api.entity.bo.ReisedBO">
+        select * from ap_reised
+        <where>
+            <if test="id != null and id != ''">
+                id = #{id}
+            </if>
+            <if test="status != null and status != ''">
+                and status = #{status}
+            </if>
+            <if test="apRead != null and apRead != ''">
+               and ap_read = #{apRead}
+            </if>
+            and ap_show = 'yes'
+        </where>
+    </select>
+
+
+    <select id="queryReised" resultType="com.wisewin.api.entity.bo.ReisedUserBO">
+        SELECT ap_reised.*,ap_user.name AS userName
+        FROM ap_reised,ap_user
+        WHERE ap_reised.user_id = ap_user.id
+        and ap_reised.comment_id = #{map.commentId}
+        AND ap_reised.ap_show = 'yes'
+        and ap_reised.status = 'ignore'
+        ORDER BY ap_reised.create_time,ap_reised.ap_read
+        <include refid="limit"/>
+    </select>
+
+    <sql id="limit">
+        limit #{map.pageOffset},#{map.pageSize}
+    </sql>
+
+
+    <select id="selectReisedById" resultType="com.wisewin.api.entity.bo.ReisedBO" parameterType="int">
+    SELECT
+      id,
+      appraisal_id,
+      comment_id,
+      content,
+      user_id,
+      `status`,
+      create_time,
+      update_time,
+      ap_show,
+      ap_read,
+      judge
+    FROM
+      appraisal.ap_reised
+    WHERE id = #{reisedId}
+
+    </select>
+
+    <update id="updateCommentByAppraisalId" parameterType="int">
+        UPDATE
+  appraisal.ap_comment
+SET
+  goods_state = 'no',
+  update_time = now()
+WHERE appraisal_id = #{appraisalId} ;
+
+
+    </update>
+
+
+    <update id="updateReisedById" parameterType="com.wisewin.api.entity.bo.ReisedBO">
+        UPDATE
+  appraisal.ap_reised
+    SET
+    <if test="appraisalId != null and appraisalId != ''">
+        appraisal_id = #{appraisalId},
+    </if>
+        <if test="commentId != null and commentId != ''">
+            comment_id = #{commentId},
+        </if>
+        <if test="content != null and content != ''">
+            content = #{content},
+        </if>
+        <if test="userId != null and userId != ''">
+            user_id = #{userId},
+        </if>
+        <if test="status != null and status != ''">
+            STATUS = #{status},
+        </if>
+        <if test="createTime != null and createTime != ''">
+            create_time = #{createTime},
+        </if>
+        update_time = now(),
+        <if test="apShow != null and apShow != ''">
+            ap_show = #{apShow},
+        </if>
+        <if test="apRead != null and apRead != ''">
+            ap_read = #{apRead},
+        </if>
+        <if test="judge != null and judge != ''">
+            judge = #{judge}
+        </if>
+        WHERE id = #{id} ;
+    </update>
+
+
+    <update id="updateReisedStatus">
+        UPDATE
+      appraisal.ap_reised
+    SET
+
+      `status` = 'accept',
+      update_time = NOW()
+    WHERE id = #{id} ;
+    </update>
+
+</mapper>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- keyvalue -->
+<mapper namespace="com.wisewin.api.dao.KeyValueDAO">
+
+    <update id="updKeyValue" parameterType="com.wisewin.api.entity.bo.KeyValueBO">
+        update ap_key_val
+        <set>
+            <if test="comment!=null and comment!=''">
+                comment=#{comment}
+            </if>
+            <if test="values!=null and values!=''">
+                `values`=#{values}
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <select id="getKeyValueList" resultType="com.wisewin.api.entity.bo.KeyValueBO">
+        select * from ap_key_val
+    </select>
+
+</mapper>

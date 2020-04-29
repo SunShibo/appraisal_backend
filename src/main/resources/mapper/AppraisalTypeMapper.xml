@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.wisewin.api.dao.AppraisalTypeDAO">
+
+    <select id="getAppraisalType" resultType="com.wisewin.api.entity.bo.AppraisalTypeBo">
+        SELECT * FROM ap_appraisal_type where ap_show='yes'  ORDER BY sort DESC
+    </select>
+
+    <update id="updAppraisalType" parameterType="com.wisewin.api.entity.bo.AppraisalTypeBo">
+        update ap_appraisal_type
+        <set>
+            <if test="typeName!=null and typeName!=''">
+                type_name=#{typeName},
+            </if>
+            <if test="apShow!=null and apShow!=''">
+                ap_show=#{apShow},
+            </if>
+            <if test="sort!=null ">
+                sort=#{sort},
+            </if>
+            update_time=now()
+        </set>
+        where id=#{id}
+    </update>
+
+    <insert id="addAppraisalType" parameterType="com.wisewin.api.entity.bo.AppraisalTypeBo">
+        insert into ap_appraisal_type
+        <set>
+            <if test="typeName!=null and typeName!=''">
+                type_name=#{typeName},
+            </if>
+            <if test="apShow!=null and apShow!=''">
+                ap_show=#{apShow},
+            </if>
+            <if test="sort!=null ">
+                sort=#{sort},
+            </if>
+            create_time=now()
+        </set>
+    </insert>
+
+
+
+    <select id="queryTypeInfo"  resultType="com.wisewin.api.entity.bo.AppraisalTypeInfoBO">
+        SELECT * FROM `ap_appraisal_type_info` WHERE ap_show='yes'
+        <if test="typeId!=null" >
+            and  type_id=#{typeId}
+        </if>
+
+        ORDER BY sort DESC
+    </select>
+
+    <update id="updTypeInfo" parameterType="com.wisewin.api.entity.bo.AppraisalTypeInfoBO">
+        UPDATE `ap_appraisal_type_info`
+         <set>
+            <if test="name!=null and name!=''">
+                name=#{name},
+            </if>
+            <if test="typeId!=null">
+                type_id=#{typeId},
+            </if>
+            <if test="sort!=null">
+                sort=#{sort},
+            </if>
+                update_time=NOW(),
+            <if test="apShow!=null and apShow!=''">
+                ap_show=#{apShow},
+            </if>
+             <if test="pictureUrl!=null and pictureUrl!=''">
+                 picture_url=#{pictureUrl},
+             </if>
+        </set>
+        WHERE id= #{id} ;
+    </update>
+
+    <insert id="addTypeInfo"  parameterType="com.wisewin.api.entity.bo.AppraisalTypeInfoBO">
+        INSERT INTO `ap_appraisal_type_info` (`name`, `type_id`, `sort`, `create_time`,`ap_show`,`picture_url`)
+         VALUES (#{name},#{typeId},#{sort},NOW(),'yes',#{pictureUrl});
+    </insert>
+
+
+</mapper>

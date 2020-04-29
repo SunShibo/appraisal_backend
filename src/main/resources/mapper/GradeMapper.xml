@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 等级配置-->
+<mapper namespace="com.wisewin.api.dao.GradeDao">
+
+    <insert id="addGrade" parameterType="com.wisewin.api.entity.bo.GradeBO">
+        insert into ap_grade (empirical,grade_name,create_time) values (#{empirical},#{gradeName},now())
+    </insert>
+
+    <update id="updGrade" parameterType="com.wisewin.api.entity.bo.GradeBO">
+        update ap_grade
+        <set>
+            <if test="empirical!=null and empirical!=''">
+                empirical=#{empirical},
+            </if>
+            <if test="gradeName!=null and gradeName!=''">
+                grade_name=#{gradeName},
+            </if>
+            update_time=now()
+        </set>
+        where id=#{id}
+    </update>
+
+    <delete id="delGrade" parameterType="java.lang.Integer">
+        delete from ap_grade where id=#{id}
+    </delete>
+
+    <select id="getGradeBOList" resultType="com.wisewin.api.entity.bo.GradeBO">
+        select * from ap_grade
+    </select>
+
+    <select id="queryGradeList" resultType="com.wisewin.api.entity.bo.GradeBO">
+        SELECT empirical,grade_name FROM appraisal.ap_grade ORDER BY empirical ASC
+    </select>
+
+</mapper>

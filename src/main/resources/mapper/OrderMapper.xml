@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 【用户】 -->
+<mapper namespace="com.wisewin.api.dao.OrderDAO">
+
+    <select id="getOrderList" resultType="com.wisewin.api.entity.bo.OrderItemBO">
+        SELECT `order`.*,`app`.title,user.`name`,user.phone,rewardUser.name as rewardName,rewardUser.phone as
+        rewardPhone,type.`type_name`
+        FROM `ap_order_item` AS `order`
+        INNER JOIN `ap_user` AS `user` ON `order`.`user_id`=`user`.`id`
+        INNER JOIN `ap_appraisal` AS `app` ON app.`id`=`order`.`appraisal_id`
+        INNER JOIN `ap_appraisal_type` AS `type` ON `type`.`id`=app.`appraisal_type_id`
+        INNER JOIN `ap_user` AS `rewardUser` ON `order`.`reward_id`=rewardUser.`id`
+        <where>
+            <if test="mobile!=null and mobile!=''">
+                and user.phone like concat('%',#{mobile},'%')
+            </if>
+            <if test="orderNumber!=null and orderNumber!=''">
+                and order_number like concat('%',#{orderNumber},'%')
+            </if>
+            <if test="afterTime!=null and afterTime!=''">
+                and `order`.create_time >= #{afterTime}
+            </if>
+            <if test="beforeTime!=null and beforeTime!=''">
+                and `order`.create_time &lt; #{beforeTime}
+            </if>
+        </where>
+        order by `order`.create_time desc
+        limit #{pageOffset},#{pageSize}
+    </select>
+
+
+    <select id="getOrderListCount" resultType="java.lang.Integer">
+        SELECT count(*)
+        FROM `ap_order_item` AS `order`
+        INNER JOIN `ap_user` AS `user` ON `order`.`user_id`=`user`.`id`
+        INNER JOIN `ap_appraisal` AS `app` ON app.`id`=`order`.`appraisal_id`
+        INNER JOIN `ap_appraisal_type` AS `type` ON `type`.`id`=app.`appraisal_type_id`
+        INNER JOIN `ap_user` AS `rewardUser` ON `order`.`reward_id`=rewardUser.`id`
+        <where>
+            <if test="mobile!=null and mobile!=''">
+                and user.phone like concat('%',#{mobile},'%')
+            </if>
+            <if test="orderNumber!=null and orderNumber!=''">
+                and order_number like concat('%',#{orderNumber},'%')
+            </if>
+            <if test="afterTime!=null and afterTime!=''">
+                and `order`.create_time >= #{afterTime}
+            </if>
+            <if test="beforeTime!=null and beforeTime!=''">
+                and `order`.create_time &lt; #{beforeTime}
+            </if>
+        </where>
+    </select>
+
+</mapper>

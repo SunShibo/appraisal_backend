@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 报表 -->
+<mapper namespace="com.wisewin.api.dao.StatementDAO">
+
+    <!-- 根据年月日获取注册数 and 活跃数 -->
+    <select id="getRegisteredCountAndActiveCount" resultType="com.wisewin.api.entity.bo.StatementBO">
+       SELECT SUM(registration_count) as registrationSum,SUM(active_count) as activeSum FROM ap_statistical
+       <where>
+           <if test="year!=null and year!=''">
+               and year(create_time)=#{year}
+           </if>
+           <if test="month!=null and month!=''">
+               and month(create_time)=#{month}
+           </if>
+           <if test="day!=null and day!=''">
+               and day(create_time)=#{day}
+           </if>
+       </where>
+    </select>
+
+    <!-- 根据年月日获取评论数-->
+    <select id="getCommentCount" resultType="java.lang.Integer">
+        SELECT count(id) FROM ap_comment
+        <where>
+            <if test="year!=null and year!=''">
+                and year(create_time)=#{year}
+            </if>
+            <if test="month!=null and month!=''">
+                and month(create_time)=#{month}
+            </if>
+            <if test="day!=null and day!=''">
+                and day(create_time)=#{day}
+            </if>
+        </where>
+    </select>
+
+    <!-- 根据年月日获取物品发布数 -->
+    <select id="getAppraisalCount" resultType="java.lang.Integer">
+        SELECT count(id) FROM `ap_appraisal`
+        <where>
+            <if test="year!=null and year!=''">
+                and year(create_time)=#{year}
+            </if>
+            <if test="month!=null and month!=''">
+                and month(create_time)=#{month}
+            </if>
+            <if test="day!=null and day!=''">
+                and day(create_time)=#{day}
+            </if>
+        </where>
+    </select>
+
+
+</mapper>

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--  -->
+<mapper namespace="com.wisewin.api.dao.WithdrawDAO">
+
+    <select id="getWithdrawBOList" resultType="com.wisewin.api.entity.bo.WithdrawBO">
+        SELECT
+        w.*,u.`name` AS userName,u.`phone` AS userPhone
+        FROM `ap_withdraw` AS w ,ap_user AS u , sys_admin AS a
+        <where>
+            w.user_id=u.id
+            <if test="afterTime!=null and afterTime!=''">
+                AND w.create_time>=#{afterTime}
+            </if>
+            <if test="beforeTime!=null and beforeTime!=''">
+                AND w.create_time&lt;=#{beforeTime}
+            </if>
+            <if test="type!=null and type!=''">
+                AND w.type=#{type}
+            </if>
+        </where>
+        ORDER BY w.update_time DESC
+        LIMIT #{pageOffset},#{pageSize}
+    </select>
+
+    <select id="getWithdrawCount" resultType="java.lang.Integer">
+        SELECT count(*)
+        FROM `ap_withdraw` AS w
+        INNER JOIN `ap_user`  AS u ON w.user_id=u.id
+        INNER JOIN `sys_admin`  AS a ON w.admin_id=a.id
+        <where>
+            <if test="afterTime!=null and afterTime!=''">
+                and w.create_time>=#{afterTime}
+            </if>
+            <if test="beforeTime!=null and beforeTime!=''">
+                and w.create_time&lt;=#{beforeTime}
+            </if>
+            <if test="type!=null and type!=''">
+                and w.type=#{type}
+            </if>
+        </where>
+    </select>
+
+    <select id="getWithdrawById" parameterType="java.lang.Integer" resultType="com.wisewin.api.entity.bo.WithdrawBO">
+        select * from ap_withdraw where id=#{id}
+    </select>
+
+    <update id="updWithdrawBO" parameterType="com.wisewin.api.entity.bo.WithdrawBO">
+        UPDATE `ap_withdraw`
+        <set>
+            <if test="userId!=null and userId!=''">
+                user_id=#{userId},
+            </if>
+            <if test="phoneType!=null and phoneType!=''">
+                phone_type=#{phoneType},
+            </if>
+            <if test="accountType!=null and accountType!=''">
+                account_type=#{accountType},
+            </if>
+            <if test="account!=null and account!=''">
+                account=#{account},
+            </if>
+            <if test="apiMsg!=null and apiMsg!=''">
+                api_msg=#{apiMsg},
+            </if>
+            <if test="type!=null and type!=''">
+                type=#{type},
+            </if>
+            <if test="money!=null and money!=''">
+                money=#{money},
+            </if>
+            <if test="adminId!=null and adminId!=''">
+                admin_id=#{adminId},
+            </if>
+            <if test="orderNumber!=null and orderNumber!=''">
+                order_number=#{orderNumber},
+            </if>
+            update_time=now()
+        </set>
+        WHERE id=#{id}
+    </update>
+</mapper>
