@@ -138,7 +138,7 @@
 
       <artifactId>poi</artifactId>
 
-      <version>3.9</version>
+      <version>3.17</version>
 
       <exclusions>
 
